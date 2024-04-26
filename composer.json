@@ -1,0 +1,15 @@
+{
+    "name": "davidyou/bloom-filter",
+    "description": "Bloom filter",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "David You",
+            "email": "davidyou21st@gmail.com"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {"Davidyou\\BloomFilter\\": "src/"}
+    }
+}

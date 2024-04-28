@@ -22,6 +22,7 @@ trait RedisTrait
     private $read_timeout = 0.0;
     private $auth = null;
     private $database = 0;
+    private $pconnect = false;
 
     protected Redis $redis;
 
@@ -44,10 +45,16 @@ trait RedisTrait
         $this->capacity = $config['capacity'] ?? $this->capacity;
         $this->auth = $config['auth'] ?? $this->auth;
         $this->errorRate = $config['error_rate'] ?? $this->errorRate;
+        $this->pconnect = $config['pconnect'] ?? $this->pconnect;
 
         try {
             $this->redis = new Redis();
-            $this->redis->connect($this->host, $this->port, $this->timeout, $this->reserved, $this->retry_interval, $this->read_timeout);
+            if ($this->pconnect) {
+                $this->redis->pconnect($this->host, $this->port, $this->timeout, $this->reserved, $this->retry_interval, $this->read_timeout);
+            } else {
+                $this->redis->connect($this->host, $this->port, $this->timeout, $this->reserved, $this->retry_interval, $this->read_timeout);
+            }
+
             $this->redis->auth($this->auth);
             $this->redis->select($this->database);
         } catch (Exception $e) {
@@ -64,11 +71,12 @@ trait RedisTrait
      * @param null $reserved
      * @param int $retry_interval
      * @param float $read_timeout
+     * @param bool $pconnect
      *
      * @return $this
      * @throws Exception
      */
-    public function setConfig($host = '127.0.0.1', $port = 6379, $database = 0, $auth = null, $timeout = 0.0, $reserved = null, $retry_interval = 0, $read_timeout = 0.0)
+    public function setConfig($host = '127.0.0.1', $port = 6379, $database = 0, $auth = null, $timeout = 0.0, $reserved = null, $retry_interval = 0, $read_timeout = 0.0, $pconnect=false)
     {
         $this->host = $host;
         $this->port = $port;
@@ -78,9 +86,27 @@ trait RedisTrait
         $this->reserved = $reserved;
         $this->retry_interval = $retry_interval;
         $this->read_timeout = $read_timeout;
+        $this->pconnect = $pconnect;
 
         $this->connect();
 
         return $this;
     }
+
+    /**
+     * @param Redis $instance
+     *
+     * @return $this
+     * @throws Exception
+     */
+    public function setInstance($instance)
+    {
+        if (!$instance instanceof Redis) {
+            throw new Exception("instance must be Redis");
+        }
+        $this->redis = $instance;
+
+        return $this;
+    }
+
 }

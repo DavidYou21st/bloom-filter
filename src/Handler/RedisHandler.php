@@ -10,6 +10,7 @@ namespace Davidyou\BloomFilter\Handler;
 
 use Davidyou\BloomFilter\Handler\Traits\RedisTrait;
 use Exception;
+use Redis;
 
 class RedisHandler implements BloomFilterInterface
 {
@@ -43,12 +44,16 @@ class RedisHandler implements BloomFilterInterface
     protected $key;
 
     /**
-     * @param array|null $config
+     * @param array|null|Redis $config
      * @throws Exception
      */
     public function __construct($config = null)
     {
-        $this->connect($config);
+        if ($config instanceof Redis) {
+            $this->setInstance($config);
+        } else {
+            $this->connect($config);
+        }
     }
 
     /**

@@ -14,6 +14,7 @@ use Davidyou\BloomFilter\Handler\Hash\FNVHash;
 use Davidyou\BloomFilter\Handler\Hash\MultiHash;
 use Davidyou\BloomFilter\Handler\Traits\RedisTrait;
 use Exception;
+use Redis;
 
 class RedisBitMapHandler implements BloomFilterInterface
 {
@@ -41,12 +42,17 @@ class RedisBitMapHandler implements BloomFilterInterface
     private $errorRate;
 
     /**
-     * @param array|null $config
+     * @param array|null|Redis $config
      * @throws Exception
      */
     public function __construct($key, $errorRate, $capacity, $config = null)
     {
-        $this->connect($config);
+        if ($config instanceof Redis) {
+            $this->setInstance($config);
+        } else {
+            $this->connect($config);
+        }
+
         $this->reserve($key, $errorRate, $capacity);
     }
 

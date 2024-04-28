@@ -11,6 +11,7 @@ namespace Davidyou\BloomFilter\Handler\BitMap;
 use Davidyou\BloomFilter\Handler\Traits\RedisTrait;
 use InvalidArgumentException;
 use Exception;
+use Redis;
 
 class RedisBitMap implements BitMapInterface
 {
@@ -21,12 +22,22 @@ class RedisBitMap implements BitMapInterface
     protected $data;
 
     protected $key;
+
     /**
+     * @param string $key
+     * @param int $length
+     * @param array|null|Redis $config
+     *
      * @throws Exception
      */
     public function __construct($key, $length, $config = null)
     {
-        $this->connect($config);
+        if ($config instanceof Redis) {
+            $this->setInstance($config);
+        } else {
+            $this->connect($config);
+        }
+
         $this->length = $length;
         $this->key = $key;
     }

@@ -64,8 +64,6 @@ class RedisBitMapHandler implements BloomFilterInterface
      */
     public function reserve($key, $errorRate, $capacity)
     {
-        $this->redis->del($key);
-
         $this->key = $key;
         $this->errorRate = $errorRate;
         $this->capacity = $capacity;

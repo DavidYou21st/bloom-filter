@@ -15,7 +15,7 @@ then run `composer install`.
 
 ## Requirements
 redis version >= 4.0
-php version >= 5.4  
+php version >= 7.1.8  
 Installed plug-ins [RedisBloom](https://github.com/RedisBloom/RedisBloom)
 
 ## How to install RedisBloom plugin ?
